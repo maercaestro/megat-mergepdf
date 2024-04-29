@@ -1,30 +1,31 @@
 import streamlit as st
-from PyPDF2 import PdfFileReader, PdfFileWriter
+from PyPDF2 import PdfReader, PdfWriter
 import os
 import tempfile
 
 def merge_pdfs(input_paths, output_path):
     # Create a PDF merger object
-    merger = PdfFileWriter()
+    merger = PdfWriter()
 
     # Loop through each PDF file and append it to the merger in the specified order
     for path in input_paths:
         with open(path, 'rb') as file:
-            reader = PdfFileReader(file)
-            for page in range(reader.getNumPages()):
-                merger.addPage(reader.getPage(page))
+            reader = PdfReader(file)
+            for page in range(len(reader.pages)):
+                merger.add_page(reader.pages[page])
 
     # Write the merged PDF to the output file
     with open(output_path, 'wb') as output_file:
         merger.write(output_file)
 
+
 # Function to split PDF based on specified page range
 def split_pdf(input_path, output_path, start_page, end_page):
     # Create a PDF reader object
-    reader = PdfFileReader(input_path)
+    reader = PdfReader(input_path)
 
     # Create a PDF writer object
-    writer = PdfFileWriter()
+    writer = PdfWriter()
 
     # Loop through the specified page range and add pages to the writer object
     for page_num in range(start_page - 1, min(end_page, reader.getNumPages())):
